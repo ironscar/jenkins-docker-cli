@@ -44,3 +44,8 @@
 
 - ```docker cp jenkins-master:/var/log/jenkins/jenkins.log jenkins.log``` to copy the logfile contents if jenkins container is stopped
 - If jenkins container no longer exists, the log volume still will so we can create a random container and mount the volume to copy out the logfile as above
+
+## References
+
+- https://technology.riotgames.com/news/thinking-inside-container productionizing jenkins as a container series
+- https://blog.nestybox.com/2019/09/29/jenkins.html containerizing jenkins
