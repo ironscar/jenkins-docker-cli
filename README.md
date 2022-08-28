@@ -40,12 +40,31 @@
 - Can configure docker below as well (just credentials will be enough as others get defaulted to default label and dockerhub as registry)
 - On save changes, it will index and run build
 
-## Retreive logs
+## Retreive Jenkins logs
 
 - ```docker cp jenkins-master:/var/log/jenkins/jenkins.log jenkins.log``` to copy the logfile contents if jenkins container is stopped
 - If jenkins container no longer exists, the log volume still will so we can create a random container and mount the volume to copy out the logfile as above
+
+---
+
+## Setup Ansible
+
+- Debian system which the jenkins official image uses has python3.9 installed by default
+- Install pip, ansible, setuptools
+- create the ansible directory in etc if not already exists (so we use `-p` flag)
+- copy the ansible.cfg file that needs to be used from repository
+- need to pick up the private key from somewhere (try below types)
+  - method 1:
+    - see if using ansible plugin jenkins can do something
+  - method 2:
+    - feed it in by build-args and copy into a file in first stage build
+    - use a second stage build to hide it from docker history and docker inspect
+
+---
 
 ## References
 
 - https://technology.riotgames.com/news/thinking-inside-container productionizing jenkins as a container series
 - https://blog.nestybox.com/2019/09/29/jenkins.html containerizing jenkins
+
+---
