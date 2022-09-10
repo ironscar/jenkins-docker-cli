@@ -39,6 +39,7 @@
 - Add filter by regular expression for branches (for starters, just main branch)
 - Can configure docker below as well (just credentials will be enough as others get defaulted to default label and dockerhub as registry)
 - On save changes, it will index and run build
+- **Need to figure out how to do this on the VM and how to scale it**
 
 ## Retreive Jenkins logs
 
