@@ -39,7 +39,19 @@
 - Add filter by regular expression for branches (for starters, just main branch)
 - Can configure docker below as well (just credentials will be enough as others get defaulted to default label and dockerhub as registry)
 - On save changes, it will index and run build
-- **Need to figure out how to do this on the VM and how to scale it**
+
+## Setup jenkins container process on VM
+
+- Currently the master node is a vm at `192.168.1.2` (subject to change)
+- we have installed docker on the master node as with every other node
+- use docker to pull the customized docker image there and run it with all the proper config
+- To access this from your host system, go to `192.168.1.2:8081` on your browser assuming the port mapping you run with is set to 8081 for container port 8080 on your vm
+- In your actual host, you can go to `/etc` (linux) or `C:/Windows/System32/drivers/etc` (windows) and open the hosts file
+- Requires admin privileges to edit this file but we can add ip to name aliases here
+- So add `192.168.1.2 jenkins.lev.com` on a new line and save it 
+- Now we can access the jenkins process running on the vm from our host browser at `http://jenkins.lev.com`
+- Here we can setup jenkins as if it were on our own host
+- To get the initial admin password, we can do `sudo docker exec myjenkins3 cat /var/jenkins_home/secrets/initialAdminPassword` inside the vm
 
 ## Retreive Jenkins logs
 
@@ -56,8 +68,10 @@
 - copy the ansible.cfg file that needs to be used from repository
 - need to pick up the private key from somewhere (try below types)
   - method 1:
-    - see if using ansible plugin jenkins can do something
+    - see if you can set the SSH keys in credentials and then update  the ansible commands to use that
   - method 2:
+    - see if using ansible plugin jenkins can do something
+  - method 3:
     - feed it in by build-args and copy into a file in first stage build
     - use a second stage build to hide it from docker history and docker inspect
 
