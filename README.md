@@ -71,9 +71,9 @@
     - see if you can set the SSH keys in credentials and then update  the ansible commands to use that
   - method 2:
     - see if using ansible plugin jenkins can do something
-  - method 3:
-    - feed it in by build-args and copy into a file in first stage build
-    - use a second stage build to hide it from docker history and docker inspect
+  - method 3 (did this for now):
+    - feed it in as a file and copy into a file in first stage build
+- stored the private key as `/~/.ssh/ansible_id_rsa`
 
 ---
 
