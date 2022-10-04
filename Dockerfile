@@ -1,4 +1,10 @@
-FROM jenkins/jenkins
+FROM jenkins/jenkins AS stage1
+
+# configure initial private ssh key to .ssh folder of jenkins user home
+COPY private_key_file.txt ~/.ssh/ansible_id_rsa
+
+# start new stage so as to mask private key
+FROM stage1
 
 # set root user
 USER root
@@ -24,8 +30,6 @@ RUN pip3 install ansible
 RUN pip3 install setuptools
 RUN mkdir -p /etc/ansible
 COPY ansible.cfg /etc/ansible
-
-# configure ssh keys owned by jenkins user
 
 # switch users back
 USER jenkins
