@@ -3,7 +3,7 @@ FROM jenkins/jenkins AS stage1
 # configure initial private ssh key to .ssh folder of jenkins user home
 COPY private_key_file.txt ~/.ssh/ansible_id_rsa
 
-# start new stage so as to mask private key
+# start new stage
 FROM stage1
 
 # set root user
