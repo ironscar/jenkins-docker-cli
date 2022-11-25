@@ -73,7 +73,10 @@
     - see if using ansible plugin jenkins can do something
   - method 3 (did this for now):
     - feed it in as a file and copy into a file in first stage build
-- stored the private key as `/~/.ssh/ansible_id_rsa`
+- stored the private key as `/~/.ssh/ansible_id_rsa` but will look at automated ssh key rotation using ansible thereafter
+  
+**Issue**: seems like the private_key_file in container on vm is not working and is in invalid format
+  - windows adds CRLF line endings but this requires LF is a possible fix
 
 ---
 
