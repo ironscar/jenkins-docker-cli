@@ -73,10 +73,10 @@
     - see if using ansible plugin jenkins can do something
   - method 3 (did this for now):
     - feed it in as a file and copy into a file in first stage build
-- stored the private key as `/~/.ssh/ansible_id_rsa` but will look at automated ssh key rotation using ansible thereafter
-  
-**Issue**: seems like the private_key_file in container on vm is not working and is in invalid format
-  - windows adds CRLF line endings but this requires LF is a possible fix
+- stored the private key as `/~/.ssh/ansible_id_rsa` using method 3 but will look at automated ssh key rotation using ansible thereafter
+  - make sure the file has LF endings and not CRLF endings as otherwise the private key is treated as invalid
+  - moreover, we have to make sure that the private key is owned by the jenkins user and has permissions 600 to actually allow SSH (updated dockerfile accordingly)
+  - lastly, jenkins user cannot ssh into the vms as root user so we have to ssh into them as the vagrant user
 
 ---
 

@@ -2,6 +2,10 @@ FROM jenkins/jenkins AS stage1
 
 # configure initial private ssh key to .ssh folder of jenkins user home
 COPY private_key_file.txt ~/.ssh/ansible_id_rsa
+USER root
+RUN chown jenkins:jenkins /~/.ssh/ansible_id_rsa
+USER jenkins
+RUN chmod 600 /~/.ssh/ansible_id_rsa
 
 # start new stage
 FROM stage1
