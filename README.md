@@ -78,6 +78,16 @@
   - moreover, we have to make sure that the private key is owned by the jenkins user and has permissions 600 to actually allow SSH (updated dockerfile accordingly)
   - lastly, jenkins user cannot ssh into the vms as root user so we have to ssh into them as the vagrant user
 
+- **Issue** - docker.sock connection is not happening when jenkins used as container inside vm due to some permission issues
+  - in the jenkins container, docker.sock belongs to a specific group id
+  - jenkins user doesn't exist in this group id so we must add a new group called docker with that group id and assign jenkins user to docker group
+  - in addition, the vm where the container is running must have its current user in the docker group of the vm
+  - `groupadd docker` will create a docker group
+  - `usermod -aG docker jenkins` will add jenkins user to docker group for container
+  - `sudo usermod -aG docker vagrant` will add vagrant user to docker group for vm
+  - double-check that docker.sock group id matches docker group's group id
+  - need to do this somehow in the Dockerfile
+
 ---
 
 ## References
