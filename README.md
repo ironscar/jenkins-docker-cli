@@ -16,7 +16,8 @@
 - Create docker data volumes for logs and home-data
 - ```docker volume create jenkins-data && docker volume create jenkins-log``` and mount them to jenkins container
 - ```docker build -t ironscar/jenkins-docker-cli:2.0.0 .```
-- ```docker run -d -p 8081:8080 -p 50000:50000 --name=myjenkins3 --group-add 0 -v //var/run/docker.sock:/var/run/docker.sock --mount source=jenkins-log,target=/var/log/jenkins --mount source=jenkins-data,target=/var/jenkins_home ironscar/jenkins-docker-cli:2.0.0``` for windows
+- ```docker run -d -p 8081:8080 -p 50000:50000 --name=myjenkins --group-add 0 -v //var/run/docker.sock:/var/run/docker.sock --mount source=jenkins-log,target=/var/log/jenkins --mount source=jenkins-data,target=/var/jenkins_home ironscar/jenkins-docker-cli:3.0.1``` for windows
+- on the VM however, the group id is not guaranteed to be 0 so run it with stat as it works for linux VM as `--group-add $(stat -c '%g' /var/run/docker.sock)` 
 
 ## Setup Jenkins
 
@@ -24,7 +25,7 @@
 - Create jenkins container as in build & run section
 - windows should include a "//var/run/docker.sock" for the host whereas linux should just have "/var/run/docker.sock"
 - using group-add without a user adds the specified group to the declared user (by default no user implies root) of the container
-- ```$(stat -c '%g' /var/run/docker.sock)``` can be added after group-add but doesn't work on windows so try to get the group id of the group that has ownership of docker.sock inside the container and add that as value to group-add flag (generally 0)
+- `$(stat -c '%g' /var/run/docker.sock)` can be added after group-add but doesn't work on windows so try to get the group id of the group that has ownership of docker.sock inside the container and add that as value to group-add flag (generally 0)
 - Install plugins: Maven integration, Docker, Docker pipelines, Pipeline utility steps
 - Set up credentials for github and docker registry using manage credentials
 - for github, also generate a personal access token from Settings > Developer settings > Personal access tokens (expires in some set time) and then create a new credential in jenkins with password as token and username as anything
@@ -81,16 +82,6 @@
   - make sure the file has LF endings and not CRLF endings as otherwise the private key is treated as invalid
   - moreover, we have to make sure that the private key is owned by the jenkins user and has permissions 600 to actually allow SSH (updated dockerfile accordingly)
   - lastly, jenkins user cannot ssh into the vms as root user so we have to ssh into them as the vagrant user
-
-- **Issue** - docker.sock connection is not happening when jenkins used as container inside vm due to some permission issues
-  - in the jenkins container, docker.sock belongs to a specific group id
-  - jenkins user doesn't exist in this group id so we must add a new group called docker with that group id and assign jenkins user to docker group
-  - in addition, the vm where the container is running must have its current user in the docker group of the vm
-  - `groupadd docker` will create a docker group
-  - `usermod -aG docker jenkins` will add jenkins user to docker group for container
-  - `sudo usermod -aG docker vagrant` will add vagrant user to docker group for vm
-  - double-check that docker.sock group id matches docker group's group id
-  - need to do this somehow in the Dockerfile
 
 ---
 
