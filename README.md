@@ -58,6 +58,10 @@
 - ```docker cp jenkins-master:/var/log/jenkins/jenkins.log jenkins.log``` to copy the logfile contents if jenkins container is stopped
 - If jenkins container no longer exists, the log volume still will so we can create a random container and mount the volume to copy out the logfile as above
 
+## Check Jenkins workspace
+
+- `cd /var/jenkins_home/workspace/{job_branch}` is the workspace for the current branch being built on the current job
+
 ---
 
 ## Setup Ansible
