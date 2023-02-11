@@ -89,7 +89,7 @@
 
 - create jenkins credentials to store the ansible vault password
   - currently stored as username password which gets saved to file and then we have to delete it
-  - jenkins allows creating secret files so that is an option to try [CHECK]
+  - jenkins allows creating secret files so that is an option to try as keeping a plaintext password file for a little while maybe a security risk [CHECK]
 - in jenkinsfile, you would provide this vault password either by creating password-file or providing the secret-file created by jenkins to decrypt the vault
 
 ---
