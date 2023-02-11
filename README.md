@@ -68,7 +68,7 @@
 ## Setup Ansible
 
 - Debian system which the jenkins official image uses has python3.9 installed by default
-- Install pip, ansible, setuptools
+- Install pip, ansible, setuptools, ansible-vault, cryptography (for optimizing vault decryption speed)
 - create the ansible directory in etc if not already exists (so we use `-p` flag)
 - copy the ansible.cfg file that needs to be used from repository
 - need to pick up the private key from somewhere (try below types)
@@ -82,6 +82,15 @@
   - make sure the file has LF endings and not CRLF endings as otherwise the private key is treated as invalid
   - moreover, we have to make sure that the private key is owned by the jenkins user and has permissions 600 to actually allow SSH (updated dockerfile accordingly)
   - lastly, jenkins user cannot ssh into the vms as root user so we have to ssh into them as the vagrant user
+
+---
+
+## Support Ansible Vault
+
+- create jenkins credentials to store the ansible vault password
+  - currently stored as username password which gets saved to file and then we have to delete it
+  - jenkins allows creating secret files so that is an option to try [CHECK]
+- in jenkinsfile, you would provide this vault password either by creating password-file or providing the secret-file created by jenkins to decrypt the vault
 
 ---
 

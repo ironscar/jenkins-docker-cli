@@ -30,8 +30,7 @@ RUN apt-get update && apt-get install -y docker-ce-cli
 
 # pip and ansible install
 RUN apt-get update && apt-get install -y pip
-RUN pip3 install ansible
-RUN pip3 install setuptools
+RUN pip3 install ansible setuptools ansible-vault cryptography
 RUN mkdir -p /etc/ansible
 COPY ansible.cfg /etc/ansible
 
