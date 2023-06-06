@@ -50,7 +50,7 @@
 - In your actual host, you can go to `/etc` (linux) or `C:/Windows/System32/drivers/etc` (windows) and open the hosts file
 - Requires admin privileges to edit this file but we can add ip to name aliases here
 - So add `192.168.1.2 jenkins.lev.com` on a new line and save it 
-- Now we can access the jenkins process running on the vm from our host browser at `http://jenkins.lev.com`
+- Now we can access the jenkins process running on the vm from our host browser at `http://jenkins.lev.com:8081`
 - Here we can setup jenkins as if it were on our own host
 - To get the initial admin password, we can do `sudo docker exec myjenkins3 cat /var/jenkins_home/secrets/initialAdminPassword` inside the vm
 
