@@ -91,6 +91,7 @@
   - currently stored as username password which gets saved to file and then we have to delete it
   - jenkins allows creating secret files so that is an option to try as keeping a plaintext password file for a little while maybe a security risk [CHECK]
 - in jenkinsfile, you would provide this vault password either by creating password-file or providing the secret-file created by jenkins to decrypt the vault
+- in case you forget jenkins credentials, we can visit `/script` on jenkins dashboard and paste the contents of `cred-display.groovy` file
 
 ---
 
