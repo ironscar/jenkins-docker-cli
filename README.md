@@ -16,7 +16,7 @@
 - Create docker data volumes for logs and home-data
 - ```docker volume create jenkins-data && docker volume create jenkins-log``` and mount them to jenkins container
 - ```docker build -t ironscar/jenkins-docker-cli:2.0.0 .```
-- ```docker run -d -p 8081:8080 -p 50000:50000 --name=myjenkins --group-add 0 -v //var/run/docker.sock:/var/run/docker.sock --mount source=jenkins-log,target=/var/log/jenkins --mount source=jenkins-data,target=/var/jenkins_home ironscar/jenkins-docker-cli:3.0.1``` for windows
+- ```docker run -d -p 8081:8080 -p 50000:50000 --name=myjenkins --group-add 0 -v //var/run/docker.sock:/var/run/docker.sock --mount source=jenkins-log,target=/var/log/jenkins --mount source=jenkins-data,target=/var/jenkins_home ironscar/jenkins-docker-cli:2.1.0``` for windows
 - on the VM however, the group id is not guaranteed to be 0 so run it with stat as it works for linux VM as `--group-add $(stat -c '%g' /var/run/docker.sock)` 
 
 ## Setup Jenkins
