@@ -95,6 +95,15 @@
 
 ---
 
+## Setup jenkins cloud
+
+- We have a few options here: [CHECK]
+  - Setup slave nodes (using regular vms over SSH)
+  - Setup new jenkins cloud option with Docker (requires form of docker host etc)
+  - Setup docker active hosts (option at the bottom of Manage jenkins)
+
+---
+
 ## References
 
 - https://technology.riotgames.com/news/thinking-inside-container productionizing jenkins as a container series
