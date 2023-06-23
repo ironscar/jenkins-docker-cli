@@ -97,10 +97,13 @@
 
 ## Setup jenkins cloud
 
-- We have a few options here: [CHECK]
+- We have a few options here:
   - Setup slave nodes (using regular vms over SSH)
   - Setup new jenkins cloud option with Docker (requires form of docker host etc)
   - Setup docker active hosts (option at the bottom of Manage jenkins)
+- What we should try is to setup slave nodes over SSH with a particular label and then create docker templates which use those labels to setup build agents and we can create custom slave docker images as well [TRY]
+  - STEP 1: Connect a slave node over SSH using user vagrant and private key of master
+  - STEP 2: Use https://hub.docker.com/r/jenkins/agent as the jenkins agent docker image
 
 ---
 
