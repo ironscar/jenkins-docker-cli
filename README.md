@@ -97,29 +97,37 @@
 
 ## Setup jenkins cloud
 
-- We have a few options here:
-  - Setup slave nodes (using regular vms over SSH)
-  - Setup new jenkins cloud option with Docker (requires form of docker host etc)
-  - Setup docker active hosts (option at the bottom of Manage jenkins)
-- What we should try is to setup slave nodes over SSH with a particular label and then create docker templates which use those labels to setup build agents and we can create custom slave docker images as well [TRY]
-  - STEP 1: Connect a slave node over SSH using user vagrant and private key of master
-  - STEP 2: Use https://hub.docker.com/r/jenkins/agent as the jenkins agent docker image
-
-- Here is what we actually did:
-  - Create a new VM for slave node
-  - Install Java 11 on the slave node by `sudo apt-get install openjdk-11-jdk`
-    - Also set JAVA_HOME and PATH env variables on slave
-  - Create a new credential of type SSH key where username if the user which we will login as and add the private key
-  - Go to Manage Jenkins > Nodes > Add new node
-  - Provide details including:
-    - Remote root directory as `/var/jenkins`
-    - Launch method is `Launch agents via SSH`
-    - Host is the ip address of the slave
-    - Credential will be the new SSH key credential we created
-    - Host key verification strategy is `Known hosts file verification strategy`
-  - Click save and this will add the new node and attempt to connect to it
-  - Set number of executors of built-in node to 0 else jenkins issues warnings
-  - If something goes wrong, the logs will be available on jenkins UI on that node
+- Create a new VM for slave node
+- Install Java 11 on the slave node by `sudo apt install default-jdk`
+  - It should install java in `/usr/lib/jvm/default-java`
+  - Go to `/etc/profile.d` and do `sudo vi javaenvvars.sh` and add the env var assignments
+  - Set system-wide env variables as `export JAVA_HOME=/usr/lib/jvm/default-java` and `export PATH=$PATH:$JAVA_HOME/bin`
+  - Make sure there are no spaces around `=` else it errors out
+  - These are run every time a new terminal is connected and sets the env variables
+  - Normally, running `export` directly only sets the variables for that terminal session so we must do it this way to make them persistent
+- Create a new credential of type SSH key where username is the user which we will login as 
+  - We will use `root` and add the private key
+  - We can use `vagrant` but for some reason it tends to use root in the ansible step which makes it fail if the steps below are done with vagrant user
+- Go to Manage Jenkins > Nodes > Add new node
+- Provide details including:
+  - Remote root directory as `/var/jenkins` and do `sudo chown <user> jenkins` to update owner of the directory if user is non-root
+  - Make sure that this directory exists on slave and the user in username has permissions on this
+  - Launch method is `Launch agents via SSH`
+  - Host is the ip address of the slave
+  - Credential will be the new SSH key credential we created
+  - Host key verification strategy is `Known hosts file verification strategy`
+- Click save and this will add the new node and attempt to connect to it
+- Set number of executors of built-in node to 0 else jenkins issues warnings
+- If something goes wrong, the logs will be available on jenkins UI on that node
+- JAVA_HOME maybe at different locations on master and slave so we can change the Tool location in Manage Jenkins > Tools from `/opt/java/openjdk` to `/usr/lib/jvm/default-java` which may not exist on master
+- Now this does all the steps perfectly except the ansible one as ansible is not installed
+  - So we do the ansible installation steps and private key copy to `/~/.ssh` from the Dockerfile of jenkins for now directly on host using root user
+    - ideally do this with the user that jenkins master logs in with as the pip install happens at a user-level
+  - Make sure to do `sudo chown <user> /~/.ssh/ansible_id_rsa` if jenkins master uses a non-root user to SSH into slave
+  - After this, reboot the machine
+  - Make sure to add `/home/vagrant/.local/bin` to PATH after reboot in `/etc/profile.d/javaenvvars.sh` as ansible requires it
+    - check this by `echo $PATH` with the user that jenkins master will use to SSH into slave
+- Later we would want to create a docker container that waits for SSH and has all this setup [TODO]
 
 ---
 
