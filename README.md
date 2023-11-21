@@ -105,6 +105,22 @@
   - STEP 1: Connect a slave node over SSH using user vagrant and private key of master
   - STEP 2: Use https://hub.docker.com/r/jenkins/agent as the jenkins agent docker image
 
+- Here is what we actually did:
+  - Create a new VM for slave node
+  - Install Java 11 on the slave node by `sudo apt-get install openjdk-11-jdk`
+    - Also set JAVA_HOME and PATH env variables on slave
+  - Create a new credential of type SSH key where username if the user which we will login as and add the private key
+  - Go to Manage Jenkins > Nodes > Add new node
+  - Provide details including:
+    - Remote root directory as `/var/jenkins`
+    - Launch method is `Launch agents via SSH`
+    - Host is the ip address of the slave
+    - Credential will be the new SSH key credential we created
+    - Host key verification strategy is `Known hosts file verification strategy`
+  - Click save and this will add the new node and attempt to connect to it
+  - Set number of executors of built-in node to 0 else jenkins issues warnings
+  - If something goes wrong, the logs will be available on jenkins UI on that node
+
 ---
 
 ## References
