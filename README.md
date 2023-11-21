@@ -127,6 +127,8 @@
   - After this, reboot the machine
   - Make sure to add `/home/vagrant/.local/bin` to PATH after reboot in `/etc/profile.d/javaenvvars.sh` as ansible requires it
     - check this by `echo $PATH` with the user that jenkins master will use to SSH into slave
+- Remember that we ought to run the ssh comands from slave for the logged in user to all inventory VMs to add the fingerprint else the ansible command would fail
+  - would be nice to have a way to specify the yes prompt automatically [CHECK]
 - Later we would want to create a docker container that waits for SSH and has all this setup [TODO]
 
 ---
