@@ -130,6 +130,7 @@
 - Remember that we ought to run the ssh comands from slave for the logged in user to all inventory VMs to add the fingerprint else the ansible command would fail
   - would be nice to have a way to specify the yes prompt automatically [CHECK]
 - Later we would want to create a docker container that waits for SSH and has all this setup [TODO]
+  - try https://dev.to/s1ntaxe770r/how-to-setup-ssh-within-a-docker-container-i5i 
 
 ---
 
