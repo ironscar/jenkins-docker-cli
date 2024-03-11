@@ -118,6 +118,10 @@
   - Host key verification strategy is `Known hosts file verification strategy`
 - Click save and this will add the new node and attempt to connect to it
 - Set number of executors of built-in node to 0 else jenkins issues warnings
+  - additionally, we will set the labels on each node, `master` for built-in node and `slave` for all slave nodes
+  - for multibranch-pipeline projects, the Jenkinsfile has to be updated with `agent {label 'slave'}`
+  - for other freestyle projects, it can be done directly in configuration on dashboard
+  - it still executes on slave after this because we set the master executors to 0 
 - If something goes wrong, the logs will be available on jenkins UI on that node
 - JAVA_HOME maybe at different locations on master and slave so we can change the Tool location in Manage Jenkins > Tools from `/opt/java/openjdk` to `/usr/lib/jvm/default-java` which may not exist on master
 - Now this does all the steps perfectly except the ansible one as ansible is not installed
@@ -128,7 +132,8 @@
   - Make sure to add `/home/vagrant/.local/bin` to PATH after reboot in `/etc/profile.d/javaenvvars.sh` as ansible requires it
     - check this by `echo $PATH` with the user that jenkins master will use to SSH into slave
 - Remember that we ought to run the ssh comands from slave for the logged in user to all inventory VMs to add the fingerprint else the ansible command would fail
-  - would be nice to have a way to specify the yes prompt automatically [CHECK]
+  - would be nice to have a way to specify the yes prompt automatically 
+  - can be done by setting `host_key_checking=no` in ansible config [TEST]
 - Later we would want to create a docker container that waits for SSH and has all this setup [TODO]
 
 ---
