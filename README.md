@@ -135,6 +135,7 @@
   - would be nice to have a way to specify the yes prompt automatically 
   - can be done by setting `host_key_checking=no` in ansible config [TEST]
 - Later we would want to create a docker container that waits for SSH and has all this setup [TODO]
+  - try https://dev.to/s1ntaxe770r/how-to-setup-ssh-within-a-docker-container-i5i 
 
 ---
 
