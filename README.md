@@ -15,7 +15,7 @@
 
 - Create docker data volumes for logs and home-data
 - ```docker volume create jenkins-data && docker volume create jenkins-log``` and mount them to jenkins container
-- ```docker build -t ironscar/jenkins-docker-cli:2.0.0 .```
+- ```docker build -f MasterDockerfile -t ironscar/jenkins-docker-cli:2.1.0 .```
 - ```docker run -d -p 8081:8080 -p 50000:50000 --name=myjenkins --group-add 0 -v //var/run/docker.sock:/var/run/docker.sock --mount source=jenkins-log,target=/var/log/jenkins --mount source=jenkins-data,target=/var/jenkins_home ironscar/jenkins-docker-cli:2.1.0``` for windows
 - on the VM however, the group id is not guaranteed to be 0 so run it with stat as it works for linux VM as `--group-add $(stat -c '%g' /var/run/docker.sock)` 
 
@@ -134,8 +134,16 @@
 - Remember that we ought to run the ssh comands from slave for the logged in user to all inventory VMs to add the fingerprint else the ansible command would fail
   - would be nice to have a way to specify the yes prompt automatically 
   - can be done by setting `host_key_checking=no` in ansible config [TEST]
+
+---
+
+## Create Slave jenkins container
+
 - Later we would want to create a docker container that waits for SSH and has all this setup [TODO]
   - try https://dev.to/s1ntaxe770r/how-to-setup-ssh-within-a-docker-container-i5i 
+- We name the main Dockerfile as `MasterDockerfile` and create a new one called `Dockerfile` and then change its name to `SlaveDockerfile`
+  - we do this so that master can be built separately, and new file gets treated as a dockerfile in IDE but can have different name as well
+- We need Java in the specified path, ansible installation and an open-ssh server to keep alive and listen for master connections
 
 ---
 
