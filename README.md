@@ -14,9 +14,9 @@
 ## Build & Run Steps
 
 - Create docker data volumes for logs and home-data
-- ```docker volume create jenkins-data && docker volume create jenkins-log``` and mount them to jenkins container
-- ```docker build -f MasterDockerfile -t ironscar/jenkins-docker-cli:2.1.0 .```
-- ```docker run -d -p 8081:8080 -p 50000:50000 --name=myjenkins --group-add 0 -v //var/run/docker.sock:/var/run/docker.sock --mount source=jenkins-log,target=/var/log/jenkins --mount source=jenkins-data,target=/var/jenkins_home ironscar/jenkins-docker-cli:2.1.0``` for windows
+- `docker volume create jenkins-data && docker volume create jenkins-log` and mount them to jenkins container
+- `docker build -f MasterDockerfile -t ironscar/jenkins-docker-cli:2.1.0 .`
+- `docker run -d -p 8081:8080 -p 50000:50000 --name=myjenkins --group-add 0 -v //var/run/docker.sock:/var/run/docker.sock --mount source=jenkins-log,target=/var/log/jenkins --mount source=jenkins-data,target=/var/jenkins_home ironscar/jenkins-docker-cli:2.1.0` for windows
 - on the VM however, the group id is not guaranteed to be 0 so run it with stat as it works for linux VM as `--group-add $(stat -c '%g' /var/run/docker.sock)` 
 
 ## Setup Jenkins
@@ -140,10 +140,21 @@
 ## Create Slave jenkins container
 
 - Later we would want to create a docker container that waits for SSH and has all this setup [TODO]
-  - try https://dev.to/s1ntaxe770r/how-to-setup-ssh-within-a-docker-container-i5i 
+  - try https://dev.to/s1ntaxe770r/how-to-setup-ssh-within-a-docker-container-i5i
 - We name the main Dockerfile as `MasterDockerfile` and create a new one called `Dockerfile` and then change its name to `SlaveDockerfile`
   - we do this so that master can be built separately, and new file gets treated as a dockerfile in IDE but can have different name as well
 - We need Java in the specified path, ansible installation and an open-ssh server to keep alive and listen for master connections
+  - we also need docker sock access on the slave container and run the python docker module on the host
+- We create the container out of `eclipse-temurin:11-jdk-jammy` which is an Ubuntu image
+  - we create a new user called `slave` in group `slave`
+  - we copy in the private key, docker and ansible pieces and update it for Ubuntu
+  - we finally install openssh-server and start ssh service
+- Run `docker build -f SlaveDockerfile -t ironscar/jenkins-docker-slave:0.0.2 .`
+- We probably don't need to create a volume for slave as build data will be stored in master
+- `docker run -d -p 22:22 --name=myslave --group-add $(stat -c '%g' /var/run/docker.sock) -v //var/run/docker.sock:/var/run/docker.sock ironscar/jenkins-docker-slave:0.0.2` for linux
+  - we are temporarily building the image in `~/temp/` with only the required files and can remove once we figure this
+  - currently this fails saying port 22 is in use so cannot connect to SSH [FIX]
+  - this is also not recommended because it opens up the attack surface of the container [CHECK]
 
 ---
 

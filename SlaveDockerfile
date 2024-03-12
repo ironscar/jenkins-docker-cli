@@ -1,1 +1,49 @@
-# fill details here
+FROM eclipse-temurin:11-jdk-jammy AS stage1
+
+# create new user
+ARG user=slave
+ARG group=slave
+ARG uid=1001
+ARG gid=1001
+RUN groupadd -g ${gid} ${group} && useradd -u ${uid} -g ${group} -s /bin/sh ${user}
+
+# configure initial private ssh key to a .ssh folder
+COPY private_key_file.txt ~/.ssh/ansible_id_rsa
+USER root
+RUN chown slave:slave /~/.ssh/ansible_id_rsa
+USER slave
+RUN chmod 600 /~/.ssh/ansible_id_rsa
+
+# start new stage
+FROM stage1
+
+# set root user
+USER root
+
+# setup remote root directory for jenkins
+RUN mkdir /var/jenkins
+RUN chown -R slave:slave /var/jenkins
+
+# docker install
+RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+RUN apt-key fingerprint 0EBFCD88
+RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+RUN apt-get update && apt-get install -y docker-ce-cli
+
+# pip and ansible install
+RUN apt-get update && apt-get install -y pip
+RUN pip3 install ansible setuptools ansible-vault cryptography
+RUN mkdir -p /etc/ansible
+COPY ansible.cfg /etc/ansible
+
+# install openssh server and expose port 22
+RUN apt-get install -y openssh-server
+RUN service ssh start
+EXPOSE 22
+
+# switch users back
+USER slave
+
+# start ssh server to listen on port 22
+CMD ["/usr/bin/sshd", "-D"]
