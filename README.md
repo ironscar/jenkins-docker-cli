@@ -145,6 +145,8 @@
   - we do this so that master can be built separately, and new file gets treated as a dockerfile in IDE but can have different name as well
 - We need Java in the specified path, ansible installation and an open-ssh server to keep alive and listen for master connections
   - we also need docker sock access on the slave container and run the python docker module on the host
+  - we may also need the public key in authorized_keys of slave container slave user as part of the Dockerfile
+
 - We create the container out of `eclipse-temurin:11-jdk-jammy` which is an Ubuntu image
   - we create a new user called `slave` in group `slave`
   - we copy in the private key, docker and ansible pieces and update it for Ubuntu
