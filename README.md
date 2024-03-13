@@ -153,10 +153,15 @@
   - we finally install openssh-server and start ssh service
 - Run `docker build -f SlaveDockerfile -t ironscar/jenkins-docker-slave:0.0.2 .`
 - We probably don't need to create a volume for slave as build data will be stored in master
-- `docker run -d -p 22:22 --name=myslave --group-add $(stat -c '%g' /var/run/docker.sock) -v //var/run/docker.sock:/var/run/docker.sock ironscar/jenkins-docker-slave:0.0.2` for linux
-  - we are temporarily building the image in `~/temp/` with only the required files and can remove once we figure this
-  - currently this fails saying port 22 is in use so cannot connect to SSH [FIX]
-  - this is also not recommended because it opens up the attack surface of the container [CHECK]
+- `docker run -d -p 8079:22 --name=myslave --group-add $(stat -c '%g' /var/run/docker.sock) -v //var/run/docker.sock:/var/run/docker.sock ironscar/jenkins-docker-slave:0.0.2` for linux
+  
+- we are temporarily building the image in `~/temp/` with only the required files and can remove once we figure this
+- currently this fails saying port 22 is in use so cannot connect to SSH [FIX]
+  - we can bind to a non-standard port like 8079
+  - specify that port in the advanced configuration of the slave node's launch method in Jenkins
+  - Next problem is that `/usr/bin/sshd` doesn't exist, but turns out `/usr/sbin/sshd` does exist so we use that
+  - Next problem is no host keys exist [FIX]
+- this is also not recommended because it opens up the attack surface of the container [CHECK]
 
 ---
 

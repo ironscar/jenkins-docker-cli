@@ -46,4 +46,4 @@ EXPOSE 22
 USER slave
 
 # start ssh server to listen on port 22
-CMD ["/usr/bin/sshd", "-D"]
+CMD ["/usr/sbin/sshd", "-D"]
