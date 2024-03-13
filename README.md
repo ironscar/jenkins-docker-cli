@@ -159,11 +159,15 @@
 - currently this fails saying port 22 is in use so cannot connect to SSH [FIX]
   - we can bind to a non-standard port like 8079
   - specify that port in the advanced configuration of the slave node's launch method in Jenkins
-  - Next problem is that `/usr/bin/sshd` doesn't exist, but turns out `/usr/sbin/sshd` does exist so we use that
-  - Next problem is no host keys exist [FIX]
-    - Try to remove slave user for now and try with just root
-    - Maybe check https://stackoverflow.com/questions/74040682/why-docker-doesnt-see-the-hostkeys-sshd-no-hostkeys-available-exiting and https://stackoverflow.com/questions/65340169/setup-docker-container-with-ssh-server
-- this is also not recommended because it opens up the attack surface of the container [CHECK]
+  - Next problem is that `/usr/bin/sshd` doesn't exist
+    - turns out `/usr/sbin/sshd` does exist so we use that
+  - Next problem is no host keys exist
+    - for this we add `mkdir -p /etc/ssh && cd /etc/ssh && ssh-keygen -A` after installing openssh-server because ssh-keygen gets installed as a part of it
+    - we also remove all `slave` user lines to just try with root
+    - this makes the container continue running
+  - Next is to try if jenkins can actually connect to this [TRY1]
+  - Then to try with a slave user as well [TRY2]
+- this is not recommended because it opens up the attack surface of the container [CHECK]
 
 ---
 
