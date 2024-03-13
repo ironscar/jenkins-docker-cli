@@ -161,6 +161,8 @@
   - specify that port in the advanced configuration of the slave node's launch method in Jenkins
   - Next problem is that `/usr/bin/sshd` doesn't exist, but turns out `/usr/sbin/sshd` does exist so we use that
   - Next problem is no host keys exist [FIX]
+    - Try to remove slave user for now and try with just root
+    - Maybe check https://stackoverflow.com/questions/74040682/why-docker-doesnt-see-the-hostkeys-sshd-no-hostkeys-available-exiting and https://stackoverflow.com/questions/65340169/setup-docker-container-with-ssh-server
 - this is also not recommended because it opens up the attack surface of the container [CHECK]
 
 ---
