@@ -14,6 +14,9 @@ COPY private_key_file.txt ~/.ssh/ansible_id_rsa
 # USER slave
 RUN chmod 600 /~/.ssh/ansible_id_rsa
 
+# copy public key into authorized_keys in root home directory
+COPY public_key_file.txt /root/.ssh/authorized_keys
+
 # start new stage
 FROM stage1
 
@@ -37,15 +40,17 @@ RUN pip3 install ansible setuptools ansible-vault cryptography
 RUN mkdir -p /etc/ansible
 COPY ansible.cfg /etc/ansible
 
-# install openssh server and expose port 22
+# install openssh server, configure sshd_config and expose port 22
 RUN apt-get install -y openssh-server
 RUN ssh-keygen -A
-RUN mkdir -p /var/jenkins_home/.ssh
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+RUN sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
 RUN service ssh start
 EXPOSE 22
 
 # git install
-RUN apt-get install git
+RUN apt-get install -y git
 
 # switch users back
 # USER slave

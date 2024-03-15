@@ -143,15 +143,17 @@
   - we do this so that master can be built separately, and new file gets treated as a dockerfile in IDE but can have different name as well
 - We need Java in the specified path, ansible installation and an open-ssh server to keep alive and listen for master connections
   - we also need docker sock access on the slave container and run the python docker module on the host
+  - need to install git and copy the public key to authorized_keys via Dockerfile
+  - need to update sshd_config as well
 
 - We create the container out of `eclipse-temurin:11-jdk-jammy` which is an Ubuntu image
   - it has Java in `/opt/java/openjdk` so we update `JAVA_HOME` at `Manage Jenkins > Tools > JDK installation`
   - we create a new user called `slave` in group `slave`
   - we copy in the private key, docker and ansible pieces and update it for Ubuntu
   - we finally install openssh-server and start ssh service
-- Run `docker build -f SlaveDockerfile -t ironscar/jenkins-docker-slave:0.0.2 .`
+- Run `docker build -f SlaveDockerfile -t ironscar/jenkins-docker-slave:0.0.1 .`
 - We probably don't need to create a volume for slave as build data will be stored in master
-- `docker run -d -p 8079:22 --name=myslave --group-add $(stat -c '%g' /var/run/docker.sock) -v //var/run/docker.sock:/var/run/docker.sock ironscar/jenkins-docker-slave:0.0.2` for linux
+- `docker run -d -p 8079:22 --name=myslave --group-add $(stat -c '%g' /var/run/docker.sock) -v //var/run/docker.sock:/var/run/docker.sock ironscar/jenkins-docker-slave:0.0.1` for linux
 
 - currently this fails saying port 22 is in use so cannot connect to SSH
   - we can bind to a non-standard port like 8079
@@ -162,16 +164,24 @@
     - for this, add `ssh-keygen -A` after installing openssh-server because ssh-keygen gets installed as a part of it
     - we also remove all `slave` user lines to just try with root
     - this makes the container continue running
-  - Next is to try if jenkins can actually connect to this [FIX]
+  - Next is to try if jenkins can actually connect to this
     - we need to make sure the sshd_config of the container follows `Troubleshooting SSH` section of `bullseye` repo
     - we also need to add the public key to `authorized_keys` in `~/.ssh` for base SSH to work
     - next, we need to specify Java path in Slave configuration as `/opt/java/openjdk/bin/java`
       - we can find this on hosts/containers using `which java`
+    - to update sshd_config, we use `RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config` and others like it in Dockerfile
+      - `-i` specifies replace in current file
+      - `s` specifies substitution
+      - After the first forward-slash is the string to find
+      - After the second forward-slash is the string to replace the first occurence with
+      - An ending forward-slash to complete the format
+      - Lastly we specify the file
     - at this point it can do direct SSH from jenkins master container but not automated connect to slave
+      - we do however need to run `ssh -i /~/ansible_id_rsa root@192.168.0.xxx` for all the app servers so that we can add the fingerprints on the slave, else ansible step will fail
     - if the verification is changed to `No verification` then both connection and job works, but that is not safe
-    - error says it needs known_hosts file in `/var/jenkins_home/.ssh` [FIX]
-    - Need to install git, do sshd_config and copy the public key to authorized_keys via Dockerfile [TODO]
-- this is not recommended because it opens up the attack surface of the container [CHECK]
+  - error says it needs known_hosts file in `/var/jenkins_home/.ssh` [FIX]
+- this is not recommended because it opens up the attack surface of the container
+  - since this is not open to internet and only ever be connected to from master, we go ahead with this for now
 
 ---
 
