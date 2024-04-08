@@ -1,4 +1,4 @@
-FROM eclipse-temurin:11-jdk-jammy AS stage1
+FROM eclipse-temurin:17-jdk-jammy AS stage1
 
 # create new user
 # ARG user=slave
